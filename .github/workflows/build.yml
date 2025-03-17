@@ -34,9 +34,9 @@ jobs:
     - name: 设置 NDK 环境变量
       run: echo "NDK_HOME=/tmp/android-ndk-r25b" >> $GITHUB_ENV
 
-    - name: 编译 main.c
+    - name: 编译 main.cpp
       run: |
-        $NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android31-clang main.c -o main
+        $NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android31-clang++ main.cpp -o main
         chmod +x main  # 确保可执行文件具有执行权限
 
     - name: 上传二进制文件作为构建产物
