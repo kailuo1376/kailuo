@@ -1,0 +1,42 @@
+name: Android C++ CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache Android NDK
+      id: ndk-cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ runner.temp }}/android-ndk
+        key: android-ndk-r25c
+        restore-keys: |
+          android-ndk-
+
+    - name: Set up Android NDK
+      if: steps.ndk-cache.outputs.cache-hit != 'true'
+      uses: android-actions/setup-android-ndk@v1
+      with:
+        ndk-version: r25c
+
+    - name: Build the project
+      run: |
+        export NDK_HOME=${{ runner.temp }}/android-ndk
+        $NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang++ -o hello_world_android main.cpp
+
+    - name: Upload binary as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: hello_world_android
+        path: hello_world_android
