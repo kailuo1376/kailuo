@@ -34,19 +34,22 @@ jobs:
     - name: 设置 NDK 环境变量
       run: echo "NDK_HOME=/tmp/android-ndk-r25b" >> $GITHUB_ENV
 
-    - name: 编译 main.cpp
+    - name: 编译 main.cpp（使用静态链接）
       run: |
-        $NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android31-clang++ main.cpp -o main
+        $NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android31-clang++ \
+          -static-libstdc++ \
+          main.cpp -o main
         chmod +x main  # 确保可执行文件具有执行权限
 
-    - name: 复制 libc++_shared.so
+    - name: 运行 main 可执行文件
       run: |
-        cp $NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so ./
+        # 使用 QEMU 模拟运行 Android 可执行文件
+        sudo apt-get update
+        sudo apt-get install -y qemu-user-static
+        qemu-aarch64-static ./main
 
     - name: 上传二进制文件作为构建产物
       uses: actions/upload-artifact@v4
       with:
         name: android-build-artifacts  # 构建产物的名称
-        path: |                        # 要上传的文件路径
-          ./main
-          ./libc++_shared.so
+        path: ./main                   # 要上传的文件路径
