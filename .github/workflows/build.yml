@@ -39,8 +39,14 @@ jobs:
         $NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android31-clang++ main.cpp -o main
         chmod +x main  # 确保可执行文件具有执行权限
 
+    - name: 复制 libc++_shared.so
+      run: |
+        cp $NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so ./
+
     - name: 上传二进制文件作为构建产物
       uses: actions/upload-artifact@v4
       with:
-        name: main-android-binary  # 构建产物的名称
-        path: ./main               # 要上传的文件路径
+        name: android-build-artifacts  # 构建产物的名称
+        path: |                        # 要上传的文件路径
+          ./main
+          ./libc++_shared.so
