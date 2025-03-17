@@ -41,13 +41,6 @@ jobs:
           main.cpp -o main
         chmod +x main  # 确保可执行文件具有执行权限
 
-    - name: 运行 main 可执行文件
-      run: |
-        # 使用 QEMU 模拟运行 Android 可执行文件
-        sudo apt-get update
-        sudo apt-get install -y qemu-user-static
-        qemu-aarch64-static ./main
-
     - name: 上传二进制文件作为构建产物
       uses: actions/upload-artifact@v4
       with:
